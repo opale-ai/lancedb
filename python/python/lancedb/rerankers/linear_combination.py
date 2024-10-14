@@ -1,3 +1,17 @@
+#  Copyright (c) 2023. LanceDB Developers
+#
+#  Licensed under the Apache License, Version 2.0 (the "License");
+#  you may not use this file except in compliance with the License.
+#  You may obtain a copy of the License at
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+#  Unless required by applicable law or agreed to in writing, software
+#  distributed under the License is distributed on an "AS IS" BASIS,
+#  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#  See the License for the specific language governing permissions and
+#  limitations under the License.
+
+from numpy import NaN
 import pyarrow as pa
 
 from .base import Reranker
@@ -45,14 +59,42 @@ class LinearCombinationReranker(Reranker):
     def merge_results(
         self, vector_results: pa.Table, fts_results: pa.Table, fill: float
     ):
-        # If both are empty then just return an empty table
-        if len(vector_results) == 0 and len(fts_results) == 0:
-            return vector_results
-        # If one is empty then return the other
+        # If one is empty then return the other and add _relevance_score
+        # column equal the existing vector or fts score
         if len(vector_results) == 0:
-            return fts_results
+            results = fts_results.append_column(
+                "_relevance_score",
+                pa.array(fts_results["_score"], type=pa.float32()),
+            )
+            if self.score == "relevance":
+                results = self._keep_relevance_score(results)
+            elif self.score == "all":
+                results = results.append_column(
+                    "_distance",
+                    pa.array([NaN] * len(fts_results), type=pa.float32()),
+                )
+            return results
+
         if len(fts_results) == 0:
-            return vector_results
+            # invert the distance to relevance score
+            results = vector_results.append_column(
+                "_relevance_score",
+                pa.array(
+                    [
+                        self._invert_score(distance)
+                        for distance in vector_results["_distance"].to_pylist()
+                    ],
+                    type=pa.float32(),
+                ),
+            )
+            if self.score == "relevance":
+                results = self._keep_relevance_score(results)
+            elif self.score == "all":
+                results = results.append_column(
+                    "_score",
+                    pa.array([NaN] * len(vector_results), type=pa.float32()),
+                )
+            return results
 
         # sort both input tables on _rowid
         combined_list = []

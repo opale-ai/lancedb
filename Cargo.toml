@@ -1,10 +1,10 @@
 [workspace]
 members = [
-    "rust/ffi/node",
-    "rust/lancedb",
-    "nodejs",
-    "python",
-    "java/core/lancedb-jni",
+  "rust/ffi/node",
+  "rust/lancedb",
+  "nodejs",
+  "python",
+  "java/core/lancedb-jni",
 ]
 # Python package needs to be built by maturin.
 exclude = ["python"]
@@ -37,16 +37,19 @@ arrow-arith = "52.2"
 arrow-cast = "52.2"
 async-trait = "0"
 chrono = "0.4.35"
-datafusion-physical-plan = "40.0"
+datafusion-common = "41.0"
+datafusion-physical-plan = "41.0"
 half = { "version" = "=2.4.1", default-features = false, features = [
-    "num-traits",
+  "num-traits",
 ] }
 futures = "0"
 log = "0.4"
 object_store = { path = "../arrow-rs/object_store" }
+moka = { version = "0.11", features = ["future"] }
 pin-project = "1.0.7"
 snafu = "0.7.4"
 url = "2"
 num-traits = "0.2"
+rand = "0.8"
 regex = "1.10"
 lazy_static = "1"

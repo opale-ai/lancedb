@@ -238,16 +238,18 @@ export class RemoteQuery<T = number[]> extends Query<T> {
       (this as any)._prefilter,
       (this as any)._refineFactor,
       (this as any)._select,
-      (this as any)._filter
+      (this as any)._filter,
+      (this as any)._metricType,
+      (this as any)._fastSearch
     )
 
     return data.toArray().map((entry: Record<string, unknown>) => {
       const newObject: Record<string, unknown> = {}
       Object.keys(entry).forEach((key: string) => {
         if (entry[key] instanceof Vector) {
-          newObject[key] = (entry[key] as Vector).toArray()
+          newObject[key] = (entry[key] as any).toArray()
         } else {
-          newObject[key] = entry[key]
+          newObject[key] = entry[key] as any
         }
       })
       return newObject as unknown as T
@@ -524,8 +526,7 @@ export class RemoteTable<T = number[]> implements Table<T> {
       numIndexedRows: body?.num_indexed_rows,
       numUnindexedRows: body?.num_unindexed_rows,
       indexType: body?.index_type,
-      distanceType: body?.distance_type,
-      completedAt: body?.completed_at
+      distanceType: body?.distance_type
     }
   }
 
