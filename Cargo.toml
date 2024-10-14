@@ -1,10 +1,10 @@
 [workspace]
 members = [
-  "rust/ffi/node",
-  "rust/lancedb",
-  "nodejs",
-  "python",
-  "java/core/lancedb-jni",
+    "rust/ffi/node",
+    "rust/lancedb",
+    "nodejs",
+    "python",
+    "java/core/lancedb-jni",
 ]
 # Python package needs to be built by maturin.
 exclude = ["python"]
@@ -23,6 +23,7 @@ categories = ["database-implementations"]
 lance = { "path" = "../lance/rust/lance", "features" = ["dynamodb"] }
 lance-index = { "path" = "../lance/rust/lance-index" }
 lance-linalg = { "path" = "../lance/rust/lance-linalg" }
+lance-table = { "path" = "../lance/rust/lance-table" }
 lance-testing = { "path" = "../lance/rust/lance-testing" }
 lance-datafusion = { "path" = "../lance/rust/lance-datafusion" }
 lance-encoding = { "path" = "../lance/rust/lance-encoding" }
@@ -40,12 +41,12 @@ chrono = "0.4.35"
 datafusion-common = "41.0"
 datafusion-physical-plan = "41.0"
 half = { "version" = "=2.4.1", default-features = false, features = [
-  "num-traits",
+    "num-traits",
 ] }
 futures = "0"
 log = "0.4"
-object_store = { path = "../arrow-rs/object_store" }
 moka = { version = "0.11", features = ["future"] }
+object_store = { path = "../arrow-rs/object_store" }
 pin-project = "1.0.7"
 snafu = "0.7.4"
 url = "2"
